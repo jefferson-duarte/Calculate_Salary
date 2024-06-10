@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary</title>
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .list, .form {
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Salary</h1>
+
+    <form action="{% url "salary:salary" %}" method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Send</button>
+    </form>
+
+    <h1>Salary List</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Day of Week</th>
+                <th>Hours</th>
+                <th>Minutes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salary in salaries %}
+                <tr>
+                    <td>{{ salary.get_day_display }}</td>
+                    <td>{{ salary.hours }}</td>
+                    <td>{{ salary.minutes }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
