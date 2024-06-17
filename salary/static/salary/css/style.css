@@ -1,0 +1,42 @@
+th, td {
+  padding: 5px;
+  text-align: center;
+}
+
+/* nav */
+
+.nav-link:focus,
+.nav-link:active {
+  color: rgb(87, 116, 201);
+}
+
+.navbar {
+  margin-bottom: 15px;
+}
+
+.navbar-nav {
+  margin: auto;
+  padding: 15px;
+}
+
+.nav-item a {
+  color: white;
+  font-size: 25px;
+}
+
+.nav-item a:hover {
+  color: rgb(135, 152, 201);
+  font-size: 25px;
+}
+
+.navbar-toggler{
+  background-color: white;
+}
+
+/* conteudo */
+
+.container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}

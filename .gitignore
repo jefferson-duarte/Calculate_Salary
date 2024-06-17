@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 zmain.py
+desktop.ini
+.megaignore

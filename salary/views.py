@@ -1,64 +1,74 @@
-from typing import Any
+from django.urls import reverse
 from .forms import SalaryForm
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from .models import Salary
+from django.shortcuts import redirect, get_object_or_404, render
+
+
+class SalaryCreateView(CreateView):
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': SalaryForm(),
+            'form_action': reverse('salary:create'),
+        }
+        return render(request, 'salary/create.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = SalaryForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            return redirect('salary:create')
+        return render(request, 'salary/create.html', {'form': form})
 
 
 class SalaryListView(ListView):
     model = Salary
-    template_name = 'salary/index.html'
     context_object_name = 'salaries'
+    template_name = 'salary/list.html'
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context['form'] = SalaryForm()
-        return context
 
-    def post(self, request, *args, **kwargs):
-        form = SalaryForm(request.POST)
+def delete_salary(request, id):
+    salary = Salary.objects.get(id=id)
+    salary.delete()
+
+    return redirect('salary:list')
+
+
+def edit_salary(request, id):
+    salary = get_object_or_404(
+        Salary,
+        id=id,
+    )
+
+    form_action = reverse('salary:edit', args=(id,))
+
+    if request.method == 'POST':
+        form = SalaryForm(request.POST, instance=salary)
+
+        context = {
+            'form': form,
+            'form_action': form_action,
+        }
 
         if form.is_valid():
-            instance = form.save(commit=False)
+            salary.save()
 
-            day_rate = 12.70
-            sunday_rate = 13.20
-            total_hours = 0
-            total_minutes = 0
+            return redirect(
+                'salary:edit',
+                id=salary.id
+            )
 
-            day = form.cleaned_data['day']
-            hours = form.cleaned_data['hours']
-            minutes = form.cleaned_data['minutes']
+        return render(request, 'salary/index.html', context)
 
-            if hours == 0:
-                hours = 1
-            if minutes == 0:
-                minutes == 1
+    form = SalaryForm(instance=salary)
 
-            minutes /= 100
+    context = {
+        'form': form,
+    }
 
-            if day == '7':
-                total_hours = hours * sunday_rate
-                total_minutes = minutes * sunday_rate
-
-            else:
-                total_hours = hours * day_rate
-                total_minutes = minutes * day_rate
-
-            total = total_hours + total_minutes
-
-            instance.total_payment = total
-            instance.save()
-
-            print(form)
-
-            # print(day, type(day))
-            # print(hours, type(hours))
-            # print(minutes, type(minutes))
-            # print(f'{total:.2f}', type(total))
-
-            return self.get(request, *args, **kwargs)
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return self.render_to_response(context)
+    return render(
+        request,
+        'salary/list.html',
+        context
+    )
