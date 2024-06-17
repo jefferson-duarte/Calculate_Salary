@@ -1,44 +1,57 @@
 {% extends "global/base.html" %}
+{% load jdfilters %}
 
 {% block content %}
 
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2>Salary List</h2>
+                
+                {% if salaries %}
+                    <h2>Salary List</h2>
+                    {% include "global/partials/_messages.html" %}
 
-                <table class="table-striped table-group-divider table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Day of Week</th>
-                            <th>Hours</th>
-                            <th>Minutes</th>
-                            <th colspan="3">Options</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for salary in salaries %}
+                    <table class="table-striped table-group-divider table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ salary.get_day_display }}</td>
-                                <td>{{ salary.hours }}</td>
-                                <td>{{ salary.minutes }}</td>
-                                <td>{{ salary.id }}</td>
-                                <td>
-                                    <form action="{% url "salary:delete" salary.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-danger">Delete</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form action="{% url "salary:edit" salary.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-primary">Edit</button>
-                                    </form>
-                                </td>
+                                <th>Day of Week</th>
+                                <th>Hours / Minutes</th>
+                                <th>Money</th>
+                                <th colspan="2">Options</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for salary in salaries %}
+                                <tr>
+                                    <td>{{ salary.get_day_display }}</td>
+                                    <td>{{ salary.hours }} : {{ salary.minutes|one_float }}</td>
+                                    <td>{{ salary.total_payment|price_format }}</td>
+                                    <td>
+                                        <form action="{% url "salary:delete" salary.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="{% url "salary:edit" salary.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary">Edit</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="5">TOTAL</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Euros</td>
+                                <td colspan="3">{{ total_payment_sum|price_format }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h1>No salaries to show!</h1>
+                {% endif %}
             </div>
         </div>
 

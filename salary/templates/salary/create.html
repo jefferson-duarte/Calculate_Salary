@@ -7,12 +7,17 @@
   <div class="row">
     <div class="col">
       <div class="form">
+
         <h2>Add Salary</h2>
+
+        {% include "global/partials/_messages.html" %}
+
         <form action="{% url "salary:create" %}" method="POST">
           {% csrf_token %}
           {{ form.as_p }}
           <button class="btn btn-success" type="submit">Save</button>
         </form>
+
       </div>
     </div>
   </div>
