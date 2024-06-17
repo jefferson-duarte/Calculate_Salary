@@ -1,8 +1,9 @@
+from django.urls import reverse_lazy
 from django.db.models import Sum
 from typing import Any
 from django.urls import reverse
 from .forms import SalaryForm
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 from .models import Salary
 from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib import messages
@@ -75,6 +76,45 @@ class SalaryListView(ListView):
         return context
 
 
+class SalaryUpdateView(UpdateView):
+    model = Salary
+    form_class = SalaryForm
+    context_object_name = 'salaries'
+    template_name = 'salary/update.html'
+    success_url = reverse_lazy('salary:list')
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+
+        day_rate = 12.70
+        sunday_rate = 13.20
+
+        day = form.cleaned_data['day']
+        hours = form.cleaned_data['hours']
+        minutes = form.cleaned_data['minutes']
+
+        if hours == 0:
+            hours = 1
+        if minutes == 0:
+            minutes == 1
+
+        minutes /= 100
+
+        if day == '7':
+            total_hours = hours * sunday_rate
+            total_minutes = minutes * sunday_rate
+        else:
+            total_hours = hours * day_rate
+            total_minutes = minutes * day_rate
+
+        total = total_hours + total_minutes
+        instance.total_payment = total
+        instance.save()
+
+        messages.success(self.request, 'Salary updated!')
+        return super().form_valid(form)
+
+
 def delete_salary(request, id):
     salary = Salary.objects.get(id=id)
     salary.delete()
@@ -82,42 +122,3 @@ def delete_salary(request, id):
     messages.success(request, 'Salary deleted!')
 
     return redirect('salary:list')
-
-
-def edit_salary(request, id):
-    salary = get_object_or_404(
-        Salary,
-        id=id,
-    )
-
-    form_action = reverse('salary:edit', args=(id,))
-
-    if request.method == 'POST':
-        form = SalaryForm(request.POST, instance=salary)
-
-        context = {
-            'form': form,
-            'form_action': form_action,
-        }
-
-        if form.is_valid():
-            salary.save()
-
-            return redirect(
-                'salary:edit',
-                id=salary.id
-            )
-
-        return render(request, 'salary/index.html', context)
-
-    form = SalaryForm(instance=salary)
-
-    context = {
-        'form': form,
-    }
-
-    return render(
-        request,
-        'salary/list.html',
-        context
-    )

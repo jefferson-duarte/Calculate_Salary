@@ -33,7 +33,7 @@
                                         </form>
                                     </td>
                                     <td>
-                                        <form action="{% url "salary:edit" salary.id %}" method="POST">
+                                        <form action="{% url "salary:edit" salary.pk %}" method="POST">
                                             {% csrf_token %}
                                             <button class="btn btn-primary">Edit</button>
                                         </form>

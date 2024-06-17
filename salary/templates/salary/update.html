@@ -1,0 +1,26 @@
+{% extends "global/base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="row">
+    <div class="col">
+      <div class="form">
+
+        <h2>Update Salary</h2>
+
+        {% include "global/partials/_messages.html" %}
+
+        <form action="{% url "salary:edit" salaries.pk %}" method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn btn-success" type="submit">Update</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
