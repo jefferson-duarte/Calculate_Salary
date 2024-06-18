@@ -5,7 +5,7 @@ from django.urls import reverse
 from .forms import SalaryForm
 from django.views.generic import ListView, CreateView, UpdateView
 from .models import Salary
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, render
 from django.contrib import messages
 
 

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # my apps
     'salary',
+    'register_user',
 ]
 
 MIDDLEWARE = [
