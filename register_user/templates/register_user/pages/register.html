@@ -1,0 +1,14 @@
+{% extends "global/base.html" %}
+
+{% block content %}
+
+<form action="{% url "auth:create" %}" method="POST">
+  {% csrf_token %}
+
+  <h1>Register</h1>
+  {{ form.as_p }}
+
+  <button class="btn btn-success" type="submit">Create</button>
+</form>
+
+{% endblock content %}
