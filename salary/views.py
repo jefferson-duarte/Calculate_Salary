@@ -7,9 +7,10 @@ from django.views.generic import ListView, CreateView, UpdateView
 from .models import Salary
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class SalaryCreateView(CreateView):
+class SalaryCreateView(LoginRequiredMixin, CreateView):
     def get(self, request, *args, **kwargs):
         context = {
             'form': SalaryForm(),
@@ -22,6 +23,8 @@ class SalaryCreateView(CreateView):
 
         if form.is_valid():
             instance = form.save(commit=False)
+
+            instance.user = self.request.user
 
             day_rate = 12.70
             sunday_rate = 13.20
@@ -58,23 +61,28 @@ class SalaryCreateView(CreateView):
         return render(request, 'salary/create.html', {'form': form})
 
 
-class SalaryListView(ListView):
+class SalaryListView(LoginRequiredMixin, ListView):
     model = Salary
     context_object_name = 'salaries'
     template_name = 'salary/list.html'
     ordering = 'day'
+
+    def get_queryset(self):
+        return Salary.objects.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
         total_hours_no_sunday = (
             Salary.objects
+            .filter(user=self.request.user)
             .filter(day__lt=int(7))
             .aggregate(total_sum=Sum('hours'))['total_sum']
         )
 
         total_minutes_no_sunday = (
             Salary.objects
+            .filter(user=self.request.user)
             .filter(day__lt=int(7))
             .aggregate(total_sum=Sum('minutes'))['total_sum']
         )
@@ -94,7 +102,11 @@ class SalaryListView(ListView):
             context['total_hours_week'] = total_hours_week
 
         try:
-            sunday_hours = Salary.objects.get(day=7)
+            sunday_hours = (
+                Salary.objects
+                .filter(user=self.request.user)
+                .get(day=7)
+            )
             context['sunday_hours'] = sunday_hours.hours
             context['sunday_minutes'] = f'{sunday_hours.minutes:.0f}'
 
@@ -129,6 +141,7 @@ class SalaryListView(ListView):
 
         total_payment_sum = (
             Salary.objects
+            .filter(user=self.request.user)
             .aggregate(total_sum=Sum('total_payment'))['total_sum']
         )
         context['total_payment_sum'] = total_payment_sum or 0
@@ -136,7 +149,7 @@ class SalaryListView(ListView):
         return context
 
 
-class SalaryUpdateView(UpdateView):
+class SalaryUpdateView(LoginRequiredMixin, UpdateView):
     model = Salary
     form_class = SalaryForm
     context_object_name = 'salaries'

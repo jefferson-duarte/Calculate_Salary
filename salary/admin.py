@@ -9,4 +9,5 @@ class SalaryAdmin(admin.ModelAdmin):
         'hours',
         'minutes',
         'total_payment',
+        'user',
     ]
