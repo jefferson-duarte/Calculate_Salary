@@ -1,3 +1,7 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 /* nav */
 .nav-link:focus,
 .nav-link:active {
@@ -13,12 +17,14 @@
   padding: 15px;
 }
 
-.nav-item a {
+.nav-item a,
+.nav-item button {
   color: white;
   font-size: 25px;
 }
 
-.nav-item a:hover {
+.nav-item a:hover,
+.nav-item button:hover {
   color: rgb(135, 152, 201);
   font-size: 25px;
 }

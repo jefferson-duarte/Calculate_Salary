@@ -2,13 +2,29 @@
 
 {% block content %}
 
-<form action="{% url "auth:create" %}" method="POST">
-  {% csrf_token %}
+<div class="register-container">
+  <div class="register-box">
 
-  <h1>Register</h1>
-  {{ form.as_p }}
+    <h2>Register</h2>
+    
+    <form action="{% url "auth:create" %}" method="POST">
+      {% csrf_token %}
 
-  <button class="btn btn-success" type="submit">Create</button>
-</form>
+      {% for field in form %}
+        <div class="input-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+              <small class="form-text text-muted">{{ field.help_text }}</small>
+          {% endif %}
+          {{ field.errors }}
+        </div>  
+      {% endfor %}
+
+      <button class="button_register" type="submit">Register</button>
+      <p>Already have an account? <a href="{% url "auth:login" %}">Login</a></p>
+    </form>
+  </div>
+</div>
 
 {% endblock content %}

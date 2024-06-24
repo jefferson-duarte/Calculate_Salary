@@ -17,6 +17,15 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url "auth:login" %}">Login</a>
         </li>
+
+        <form action="{% url "auth:logout" %}" method="POST">
+          {% csrf_token %}
+
+          <li class="nav-item">
+              <button class="nav-link" type="submit">Logout</button>
+          </li> 
+        </form>
+
       </ul>
     </div>
   </div>

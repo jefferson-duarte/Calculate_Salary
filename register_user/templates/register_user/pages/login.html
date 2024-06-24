@@ -2,13 +2,29 @@
 
 {% block content %}
 
-  <form action="{% url "auth:login" %}" method="POST">
-    {% csrf_token %}
+<div class="login-container">
+  <div class="login-box">
+      <h2>Login</h2>
 
-    <h1>Login</h1>
-    {{ form.as_p }}
+      {% include "global/partials/_messages.html" %}
 
-    <button class="btn btn-success" type="submit">Enter</button>
-  </form>
+      <form action="{% url "auth:login" %}" method="POST">
+        {% csrf_token %}
+        
+          <div class="input-group">
+            {{ form.username.label_tag}}
+            {{ form.username }}            
+          </div>
+          <div class="input-group">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+          </div>
+
+          <button class="button_register" type="submit">Login</button>
+          <p>Don't have an account? <a href="{% url "auth:create" %}">Sign Up</a></p>
+      </form>
+
+  </div>
+</div>
 
 {% endblock content %}
