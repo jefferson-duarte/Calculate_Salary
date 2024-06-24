@@ -67,6 +67,66 @@ class SalaryListView(ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
+        total_hours_no_sunday = (
+            Salary.objects
+            .filter(day__lt=int(7))
+            .aggregate(total_sum=Sum('hours'))['total_sum']
+        )
+
+        total_minutes_no_sunday = (
+            Salary.objects
+            .filter(day__lt=int(7))
+            .aggregate(total_sum=Sum('minutes'))['total_sum']
+        )
+
+        try:
+            if total_minutes_no_sunday > 60:
+                total_minutes_no_sunday /= 60
+            else:
+                total_minutes_no_sunday /= 100
+
+            total_hours_week = total_hours_no_sunday + total_minutes_no_sunday
+            context['total_hours_week'] = f'{total_hours_week:.2f}'.replace('.', ' : ')  # noqa:E501
+
+        except TypeError:
+            total_minutes_no_sunday = 0
+            total_hours_week = 0
+            context['total_hours_week'] = total_hours_week
+
+        try:
+            sunday_hours = Salary.objects.get(day=7)
+            context['sunday_hours'] = sunday_hours.hours
+            context['sunday_minutes'] = f'{sunday_hours.minutes:.0f}'
+
+            sunday_hours.minutes /= 100
+            total_minutes_no_sunday = round(total_minutes_no_sunday, 2)
+            minutes = total_minutes_no_sunday + sunday_hours.minutes
+
+            try:
+                hours = total_hours_no_sunday + sunday_hours.hours
+            except TypeError:
+                total_hours_no_sunday = 0
+                hours = total_hours_no_sunday + sunday_hours.hours
+
+            total_hours = int(str(minutes + hours).split('.')[0])
+            total_minutes = int(str(minutes + hours).split('.')[1])
+
+            while True:
+                if total_minutes > 60:
+                    total_minutes -= 60
+                    total_hours += 1
+                else:
+                    break
+
+            total_hours = total_hours + (total_minutes / 100)
+
+            context['total_hours'] = f'{total_hours:.2f}'.replace('.', ' : ')
+
+        except Salary.DoesNotExist:
+            context['sunday_hours'] = 0
+            context['sunday_minutes'] = 0
+            context['total_hours'] = f'{total_hours_week:.2f}'.replace('.', ' : ')  # noqa:E501
+
         total_payment_sum = (
             Salary.objects
             .aggregate(total_sum=Sum('total_payment'))['total_sum']

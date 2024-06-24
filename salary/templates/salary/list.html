@@ -47,6 +47,24 @@
                                 <td colspan="2">Euros</td>
                                 <td colspan="3">{{ total_payment_sum|price_format }}</td>
                             </tr>
+                            
+                            <tr>
+                                <td colspan="5">Hours</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Week</td>
+                                <td colspan="3">{{total_hours_week}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Sunday</td>
+                                <td colspan="3">{{ sunday_hours }} : {{ sunday_minutes }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Total</td>
+                                <td colspan="3">{{ total_hours }}</td>
+                            </tr>
+                            
+                            
                         </tbody>
                     </table>
                 {% else %}
