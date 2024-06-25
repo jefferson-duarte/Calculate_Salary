@@ -68,7 +68,10 @@ class SalaryListView(LoginRequiredMixin, ListView):
     ordering = 'day'
 
     def get_queryset(self):
-        return Salary.objects.filter(user=self.request.user)
+        queryset = super().get_queryset()
+        queryset = Salary.objects.filter(user=self.request.user)
+
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -156,8 +159,15 @@ class SalaryUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'salary/update.html'
     success_url = reverse_lazy('salary:list')
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = Salary.objects.filter(user=self.request.user)
+
+        return queryset
+
     def form_valid(self, form):
         instance = form.save(commit=False)
+        instance.user = self.request.user
 
         day_rate = 12.70
         sunday_rate = 13.20
