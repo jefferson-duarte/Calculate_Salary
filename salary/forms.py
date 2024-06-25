@@ -7,6 +7,7 @@ class SalaryForm(forms.ModelForm):
         model = Salary
         fields = [
             'day',
+            'value_hour',
             'hours',
             'minutes',
         ]

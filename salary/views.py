@@ -26,10 +26,11 @@ class SalaryCreateView(LoginRequiredMixin, CreateView):
 
             instance.user = self.request.user
 
-            day_rate = 12.70
-            sunday_rate = 13.20
+            # day_rate = 12.70
+            # sunday_rate = 13.20
 
-            day = form.cleaned_data['day']
+            value_hour = form.cleaned_data['value_hour']
+            # day = form.cleaned_data['day']
             hours = form.cleaned_data['hours']
             minutes = form.cleaned_data['minutes']
 
@@ -37,19 +38,19 @@ class SalaryCreateView(LoginRequiredMixin, CreateView):
             total_minutes: float
             minutes /= 100
 
-            if day == '7':
-                total_hours = hours * sunday_rate
-                total_minutes = minutes * sunday_rate
-                total = total_hours + total_minutes
-                instance.total_payment = total
+            # if day == '7':
+            #     total_hours = hours * sunday_rate
+            #     total_minutes = minutes * sunday_rate
+            #     total = total_hours + total_minutes
+            #     instance.total_payment = total
 
-                instance.save()
-                messages.success(request, 'Salary added')
+            #     instance.save()
+            #     messages.success(request, 'Salary added')
 
-                return redirect('salary:create')
+            #     return redirect('salary:create')
 
-            total_hours = hours * day_rate
-            total_minutes = minutes * day_rate
+            total_hours = hours * value_hour
+            total_minutes = minutes * value_hour
             total = total_hours + total_minutes
             instance.total_payment = total
 
@@ -169,10 +170,11 @@ class SalaryUpdateView(LoginRequiredMixin, UpdateView):
         instance = form.save(commit=False)
         instance.user = self.request.user
 
-        day_rate = 12.70
-        sunday_rate = 13.20
+        # day_rate = 12.70
+        # sunday_rate = 13.20
 
-        day = form.cleaned_data['day']
+        value_hour = form.cleaned_data['value_hour']
+        # day = form.cleaned_data['day']
         hours = form.cleaned_data['hours']
         minutes = form.cleaned_data['minutes']
 
@@ -183,13 +185,15 @@ class SalaryUpdateView(LoginRequiredMixin, UpdateView):
 
         minutes /= 100
 
-        if day == '7':
-            total_hours = hours * sunday_rate
-            total_minutes = minutes * sunday_rate
-        else:
-            total_hours = hours * day_rate
-            total_minutes = minutes * day_rate
+        # if day == '7':
+        #     total_hours = hours * sunday_rate
+        #     total_minutes = minutes * sunday_rate
+        # else:
+        #     total_hours = hours * value_hour
+        #     total_minutes = minutes * value_hour
 
+        total_hours = hours * value_hour
+        total_minutes = minutes * value_hour
         total = total_hours + total_minutes
         instance.total_payment = total
         instance.save()

@@ -13,7 +13,7 @@ class Salary(models.Model):
         ('7', 'Sunday'),
     )
     day = models.CharField(max_length=1, choices=day_of_week)
-    # TODO: add input for day_rate and sunday_rate
+    value_hour = models.FloatField(default=0)
     hours = models.PositiveIntegerField()
     minutes = models.FloatField()
     total_payment = models.FloatField(default=0)
